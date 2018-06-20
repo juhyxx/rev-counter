@@ -24,21 +24,21 @@ class Model:
     def onDataChange(self, data):
         print('Data changed, implement me')
 
-
     @staticmethod
     def convert_data(data):
         result = {}
         index = 0
         for value in data.split("\n"):
-            val = value.split(",")
-            key = int(val[0])
-            item = result.get(key)
-            if (item is None):
-                result[key] = {"x": [], "y": []}
+            if (value):
+                val = value.split(",")
+                key = int(val[0])
                 item = result.get(key)
-            item['y'].append(float(val[1]))
-            item['x'].append(index)
-            index += 1
+                if (item is None):
+                    result[key] = {"x": [], "y": []}
+                    item = result.get(key)
+                item['y'].append(float(val[1]))
+                item['x'].append(index)
+                index += 1
         return result
 
     def connect(self ):
