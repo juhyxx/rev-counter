@@ -11,6 +11,20 @@ class App:
     size = "700x500"
     fileType = (("csv", "*.csv"), ("all files", "*.*"))
 
+    @property
+    def model(self):
+        return self._model
+
+    @model.setter
+    def model(self, newModel):
+        self._model = newModel
+        self.model.onDataChange = self.dataChangeHandler
+
+    @model.deleter
+    def model(self):
+        self._model.destroy()
+        del self._model
+
     def set_title(self, title = ""):
         self.app.title(self.title + ' ' + title)
 
@@ -18,22 +32,33 @@ class App:
         app = Tk()
         self.app = app
         self.win = PanedWindow()
-        app.protocol("WM_DELETE_WINDOW", self.commandQuit)
+        app.protocol("WM_DELETE_WINDOW", self.command_quit)
 
         pyplot.ion()
 
-        self._model = model
-        self._model.onDataChange = self.dataChangeHandler
-
+        self.model = model
         app.geometry(self.size)
         app.config(menu=self.generate_menu_bar(app))
-        app.bind("<Control-q>", self.commandQuit)
-        app.bind("<Control-w>", self.commandQuit)
+        app.bind("<Control-q>", self.command_quit)
+        app.bind("<Control-w>", self.command_quit)
         self.set_title()
         self.win.pack(fill=BOTH, expand=1)
-        self.subplot = self.generate_chart(self.win)
-        self._model.data = "1,3\n1,3\n2,3\n1,1\n"
-        self._model.connect()
+
+        figure = Figure(figsize=(4, 4), dpi=100)
+        figure.set_facecolor("lightgoldenrodyellow")
+
+        subplot = figure.add_subplot(111)
+        subplot.set_ylabel("Revs [rev/min]")
+
+        canvas = FigureCanvasTkAgg(figure, master=self.win)
+        canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
+
+        canvas.draw()
+        self.canvas = canvas
+        self.figure = figure
+        self.subplot = subplot
+        self.model.data = "1,3\n1,3\n2,3\n1,1\n"
+        self.model.connect()
         app.mainloop()
 
     def dataChangeHandler(self, data):
@@ -47,22 +72,6 @@ class App:
         self.figure.canvas.draw_idle()
         #self.canvas.draw()
 
-    def generate_chart(self, parent):
-        figure = Figure(figsize=(4, 4), dpi=100)
-        figure.set_facecolor("lightgoldenrodyellow")
-        self.figure = figure
-
-        subplot = figure.add_subplot(111)
-        subplot.set_ylabel("Revs [rev/min]")
-
-        canvas = FigureCanvasTkAgg(figure, master=parent)
-
-        canvas.draw()
-        canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
-        self.canvas = canvas
-
-        return subplot
-
     def generate_menu_bar(self, win):
         menubar = Menu(win)
 
@@ -70,7 +79,7 @@ class App:
         filemenu.add_command(label="Open", command=self.command_open)
         filemenu.add_command(label="Save", command=self.command_save)
         filemenu.add_separator()
-        filemenu.add_command(label="Exit", command=self.commandQuit)
+        filemenu.add_command(label="Exit", command=self.command_quit)
         menubar.add_cascade(label="File", menu=filemenu)
 
         serialmenu = Menu(menubar, tearoff=0)
@@ -85,18 +94,18 @@ class App:
         if (filename):
             file = open(filename, 'r')
             self.set_title(filename)
-            self._model.data = file.read()
+            self.model.data = file.read()
 
     def command_save(self):
         filename = filedialog.asksaveasfilename(title="Save file", filetypes=self.fileType)
         if (filename):
             with open(filename, 'w') as file:
-                file.write(self._model.originalData)
+                file.write(self.model.originalData)
             self.set_title(filename + ' Saved')
 
     def command_connect(self):
         print('Connect')
 
-    def commandQuit(self, event=None):
-        self._model.destroy()
+    def command_quit(self, event=None):
+        del self.model
         self.app.destroy()

@@ -10,17 +10,17 @@ class Model:
     baudrate = 9600
 
     @property
-    def data(self, data):
+    def data(self):
         return self._data
 
     @data.setter
     def data(self, newData):
-        self.inputData = newData;
+        self.inputData = newData
         self._data = self.convert_data(self.inputData)
         self.onDataChange(self._data)
 
     def dataAppend(self, newData):
-        self.inputData = self.inputData + newData;
+        self.inputData = self.inputData + newData
         self._data = self.convert_data(self.inputData)
         print(self._data)
         self.onDataChange(self._data)
