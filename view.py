@@ -3,6 +3,7 @@ from tkinter import filedialog
 
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 from matplotlib.figure import Figure
+from matplotlib import pyplot
 
 
 class App:
@@ -17,9 +18,12 @@ class App:
         app = Tk()
         self.app = app
         self.win = PanedWindow()
+        app.protocol("WM_DELETE_WINDOW", self.commandQuit)
+
+        pyplot.ion()
 
         self._model = model
-        self._model.onDataChange = self.dataChangeHandler;
+        self._model.onDataChange = self.dataChangeHandler
 
         app.geometry(self.size)
         app.config(menu=self.generate_menu_bar(app))
@@ -28,16 +32,20 @@ class App:
         self.set_title()
         self.win.pack(fill=BOTH, expand=1)
         self.subplot = self.generate_chart(self.win)
-        self._model.data = "1,289\n1,268\n2,300\n1,287"
+        self._model.data = "1,3\n1,3\n2,3\n1,1\n"
+        self._model.connect()
         app.mainloop()
 
     def dataChangeHandler(self, data):
         self.draw_data(data)
 
     def draw_data(self, data):
+        print("draw_data", data)
         for val in data:
-            self.subplot.plot(data[val]['x'], data[val]['y'], '-o')
+            plot = self.subplot.plot(data[val]['x'], data[val]['y'], '-o')
+
         self.figure.canvas.draw_idle()
+        #self.canvas.draw()
 
     def generate_chart(self, parent):
         figure = Figure(figsize=(4, 4), dpi=100)
@@ -48,8 +56,10 @@ class App:
         subplot.set_ylabel("Revs [rev/min]")
 
         canvas = FigureCanvasTkAgg(figure, master=parent)
+
         canvas.draw()
         canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
+        self.canvas = canvas
 
         return subplot
 
@@ -88,4 +98,5 @@ class App:
         print('Connect')
 
     def commandQuit(self, event=None):
+        self._model.destroy()
         self.app.destroy()

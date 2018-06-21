@@ -1,7 +1,13 @@
 import serial
+from multiprocessing import Pool
+from multiprocessing import Process
+
+# python -m serial.tools.miniterm <port_name>
 
 class Model:
     inputData = ''
+    port = '/dev/ttyACM0'
+    baudrate = 9600
 
     @property
     def data(self, data):
@@ -10,7 +16,13 @@ class Model:
     @data.setter
     def data(self, newData):
         self.inputData = newData;
-        self._data = self.convert_data(newData)
+        self._data = self.convert_data(self.inputData)
+        self.onDataChange(self._data)
+
+    def dataAppend(self, newData):
+        self.inputData = self.inputData + newData;
+        self._data = self.convert_data(self.inputData)
+        print(self._data)
         self.onDataChange(self._data)
 
     @property
@@ -41,8 +53,15 @@ class Model:
                 index += 1
         return result
 
-    def connect(self ):
-        # python -m serial.tools.miniterm <port_name>
-        with serial.Serial('/dev/ttyS4', 9600, timeout=1) as ser:
-            line = ser.readline()  # read a '\n' terminated line
-            print(line)
+    def readSerial(self):
+        with serial.Serial(self.port, self.baudrate, timeout=1) as ser:
+            while(1):
+                line = ser.readline()
+                self.dataAppend(line.decode('utf-8').replace(r"\r\n", r"\n"))
+
+    def connect(self):
+        self.process = Process(target=self.readSerial)
+        self.process.start()
+
+    def destroy(self):
+        self.process.terminate()

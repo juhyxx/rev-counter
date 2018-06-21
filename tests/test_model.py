@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from model import *
 
+
 class TestModel(TestCase):
 
     def test_convert_data(self):
