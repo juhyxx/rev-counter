@@ -3,5 +3,7 @@
 from view import *
 from model import *
 
-model = Model()
-app = App(model)
+app = App()
+app.model = Model()
+app.model.connect()
+app.mainloop()
