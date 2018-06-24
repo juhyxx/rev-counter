@@ -109,21 +109,24 @@ class App(tk.Frame):
 
         serialmenu = tk.Menu(menubar, tearoff=0)
         serialmenu.add_command(label="Connect", command=self.command_connect)
-        serialmenu.add_command(label="Disconnect", command=self.command_disconnect)
+        serialmenu.add_command(label="Disconnect",
+                               command=self.command_disconnect)
         serialmenu.add_command(label="Show log", command=self.command_save)
         menubar.add_cascade(label="Serial", menu=serialmenu)
         return menubar
 
     def command_open(self):
-        filename = filedialog.askopenfilename(title="Open file", filetypes=self.fileType)
-        if (filename):
+        filename = filedialog.askopenfilename(title="Open file",
+                                              filetypes=self.fileType)
+        if filename:
             file = open(filename, 'r')
             self.set_title(filename)
             self.model.data = file.read()
 
     def command_save(self):
-        filename = filedialog.asksaveasfilename(title="Save file", filetypes=self.fileType)
-        if (filename):
+        filename = filedialog.asksaveasfilename(title="Save file",
+                                                filetypes=self.fileType)
+        if filename:
             with open(filename, 'w') as file:
                 file.write(self.model.originalData)
             self.set_title(filename + ' Saved')
