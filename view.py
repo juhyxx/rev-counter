@@ -1,12 +1,12 @@
-from tkinter import *
-from tkinter import filedialog, Frame
+import tkinter as tk
+from tkinter import filedialog
 
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 
 
-class App(Frame):
+class App(tk.Frame):
     title = "Rev counter"
     size = "700x500"
     fileType = (("csv", "*.csv"), ("all files", "*.*"))
@@ -32,8 +32,8 @@ class App(Frame):
         self.win.title(self.title + ' ' + title)
 
     def __init__(self,  *args, **kwargs):
-        win = Tk()
-        Frame.__init__(self, win, *args, **kwargs)
+        win = tk.Tk()
+        tk.Frame.__init__(self, win, *args, **kwargs)
 
         self.win = win
         win.geometry(self.size)
@@ -53,7 +53,7 @@ class App(Frame):
         axis.set_ylabel("Revs [rev/min]")
 
         canvas = FigureCanvasTkAgg(figure, master=self.win)
-        canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
         canvas.draw()
         self.axis = axis
         self.canvas = canvas
@@ -98,16 +98,16 @@ class App(Frame):
 
 
     def generate_menu_bar(self, win):
-        menubar = Menu(win)
+        menubar = tk.Menu(win)
 
-        filemenu = Menu(menubar, tearoff=0)
+        filemenu = tk.Menu(menubar, tearoff=0)
         filemenu.add_command(label="Open", command=self.command_open)
         filemenu.add_command(label="Save", command=self.command_save)
         filemenu.add_separator()
         filemenu.add_command(label="Exit", command=self.command_quit)
         menubar.add_cascade(label="File", menu=filemenu)
 
-        serialmenu = Menu(menubar, tearoff=0)
+        serialmenu = tk.Menu(menubar, tearoff=0)
         serialmenu.add_command(label="Connect", command=self.command_connect)
         serialmenu.add_command(label="Disconnect", command=self.command_disconnect)
         serialmenu.add_command(label="Show log", command=self.command_save)
