@@ -60,7 +60,7 @@ class App(tk.Frame):
 
     def draw_data(self, data):
         axis = self.axis
-        range = {
+        ranges = {
             'xmin': 0,
             'xmax': 0,
             'ymin': 0,
@@ -77,19 +77,19 @@ class App(tk.Frame):
             y = data[sensor]['y']
             line.set_data(x, y)
             try:
-                range['xmin'] = min(min(x), range['xmin'])
-                range['ymin'] = min(min(y), range['ymin'])
-                range['xmax'] = max(max(x), range['xmax'])
-                range['ymax'] = max(max(y), range['ymax'])
+                ranges['xmin'] = min(min(x), ranges['xmin'])
+                ranges['ymin'] = min(min(y), ranges['ymin'])
+                ranges['xmax'] = max(max(x), ranges['xmax'])
+                ranges['ymax'] = max(max(y), ranges['ymax'])
             except:
-                range['xmin'] = 0
-                range['ymin'] = 0
-                range['xmax'] = 0
-                range['ymax'] = 0
+                ranges['xmin'] = 0
+                ranges['ymin'] = 0
+                ranges['xmax'] = 0
+                ranges['ymax'] = 0
         axis.legend()
 
-        axis.set_xlim(range['xmin'], range['xmax'])
-        axis.set_ylim(range['ymin'], range['ymax'])
+        axis.set_xlim(ranges['xmin'], ranges['xmax'])
+        axis.set_ylim(ranges['ymin'], ranges['ymax'])
 
         try:
             self.canvas.draw()
