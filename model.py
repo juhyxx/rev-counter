@@ -62,12 +62,12 @@ class Model:
         t = threading.currentThread()
         while getattr(t, "do_run", True):
             with serial.Serial(self.port, self.baudrate, timeout=1) as ser:
-                while(1):
+                while(True):
                     line = ser.readline()
                     self.dataAppend(line.decode('utf-8').rstrip())
 
     def connect(self):
-        self.t = threading.Thread(target=self.readSerial)
+        self.t = threading.Thread(target=self.readSerial, name="SerialReader")
         self.t.do_run = True
         self.t.start()
 

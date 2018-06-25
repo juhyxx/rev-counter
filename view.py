@@ -22,45 +22,42 @@ class App(Frame):
         self.model.onDataChange = self.draw_data
 
     def set_title(self, title = ""):
-        self.app.title(self.title + ' ' + title)
+        self.win.title(self.title + ' ' + title)
 
     def __init__(self,  *args, **kwargs):
-        app = Tk()
-        Frame.__init__(self, app, *args, **kwargs)
+        win = Tk()
+        Frame.__init__(self, win, *args, **kwargs)
 
-        self.app = app
-        self.win = PanedWindow()
-        app.protocol("WM_DELETE_WINDOW", self.command_quit)
-
-        plt.ion()
-
-        app.geometry(self.size)
-        app.config(menu=self.generate_menu_bar(app))
-        app.bind("<Control-q>", self.command_quit)
-        app.bind("<Control-w>", self.command_quit)
+        self.win = win
+        win.geometry(self.size)
+        win.config(menu=self.generate_menu_bar(win))
+        win.protocol("WM_DELETE_WINDOW", self.command_quit)
+        win.bind("<Control-q>", self.command_quit)
+        win.bind("<Control-w>", self.command_quit)
         self.set_title()
-        self.win.pack(fill=BOTH, expand=1)
+        self.generate_chart()
 
+    def generate_chart(self):
+        plt.ion()
         figure = Figure(figsize=(4, 4), dpi=100)
         figure.set_facecolor("lightgoldenrodyellow")
 
         axis = figure.add_subplot(111)
         axis.set_ylabel("Revs [rev/min]")
 
-        self.axis = axis
-
         canvas = FigureCanvasTkAgg(figure, master=self.win)
         canvas.get_tk_widget().pack(side=TOP, fill=BOTH, expand=1)
         canvas.draw()
+        self.axis = axis
         self.canvas = canvas
 
     def draw_data(self, data):
         axis = self.axis
         range = {
             'xmin': 0,
-            'xmax': 0,
+            'xmax': 100,
             'ymin': 0,
-            'ymax': 0
+            'ymax': 100
         }
 
         for sensor in data:
@@ -72,10 +69,16 @@ class App(Frame):
             x = data[sensor]['x']
             y = data[sensor]['y']
             line.set_data(x, y)
-            range['xmin'] = min(min(x), range['xmin'])
-            range['ymin'] = min(min(y), range['ymin'])
-            range['xmax'] = max(max(x), range['xmax'])
-            range['ymax'] = max(max(y), range['ymax'])
+            try:
+                range['xmin'] = min(min(x), range['xmin'])
+                range['ymin'] = min(min(y), range['ymin'])
+                range['xmax'] = max(max(x), range['xmax'])
+                range['ymax'] = max(max(y), range['ymax'])
+            except:
+                range['xmin'] = 0
+                range['ymin'] = 0
+                range['xmax'] = 100
+                range['ymax'] = 100
 
         axis.set_xlim(range['xmin'], range['xmax'])
         axis.set_ylim(range['ymin'], range['ymax'])
@@ -120,4 +123,4 @@ class App(Frame):
 
     def command_quit(self, event=None):
         self.model.destroy()
-        self.app.destroy()
+        self.win.destroy()
