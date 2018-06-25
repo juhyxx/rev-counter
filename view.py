@@ -19,10 +19,10 @@ class App(Frame):
     @model.setter
     def model(self, new_model):
         self._model = new_model
-        self.model.onDataChange = self.draw_data
-        self.model.updateUI = self.updateUI
+        self.model.on_data_change = self.draw_data
+        self.model.update_ui = self.update_ui
 
-    def updateUI(self):
+    def update_ui(self):
         try:
             self.win.update()
         except:
@@ -125,7 +125,7 @@ class App(Frame):
         filename = filedialog.asksaveasfilename(title="Save file", filetypes=self.fileType)
         if (filename):
             with open(filename, 'w') as file:
-                file.write(self.model.originalData)
+                file.write(self.model.original_data)
             self.set_title(filename + ' Saved')
 
     def command_connect(self):

@@ -15,26 +15,26 @@ class Model:
     def data(self, newData):
         self.inputData = newData
         self._data = self.convert_data(self.inputData)
-        self.onDataChange(self._data)
+        self.on_data_change(self._data)
 
-    def dataAppend(self, newData):
+    def data_append(self, newData):
         if  re.match("\d+,\d+", newData):
             self.inputData = self.inputData + newData + '\n'
             self._data = self.convert_data(self.inputData)
-            self.onDataChange(self._data)
+            self.on_data_change(self._data)
 
     @property
-    def originalData(self):
+    def original_data(self):
         return self._originalData
 
-    @originalData.setter
-    def originalData(self, data):
+    @original_data.setter
+    def original_data(self, data):
         self._originalData = data;
 
-    def onDataChange(self, data):
+    def on_data_change(self, data):
         print('Data changed, implement me')
 
-    def updateUI(self):
+    def update_ui(self):
         print('free for update')
 
     @staticmethod
@@ -58,20 +58,20 @@ class Model:
                     print(e)
         return result
 
-    def readSerial(self):
+    def read_serial(self):
         while(self.serial.isOpen()):
             if (self.serial.inWaiting() > 0):
                 line = self.serial.readline()
                 print(line)
                 try:
-                    self.dataAppend(line.decode('utf-8').rstrip())
+                    self.data_append(line.decode('utf-8').rstrip())
                 except:
                     pass
-            self.updateUI()
+            self.update_ui()
 
     def connect(self):
         self.serial = serial.Serial(self.port, self.baudrate, timeout=0)
-        self.readSerial()
+        self.read_serial()
 
     def destroy(self):
         self.serial.close()
