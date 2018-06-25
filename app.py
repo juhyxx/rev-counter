@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from view import *
-from model import *
+from view import App
+from model import Model
 
 app = App()
 app.model = Model()
