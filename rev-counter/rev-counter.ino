@@ -7,30 +7,23 @@ void setup() {
 
 void loop() {
   
-  Serial.print(1);    
-  Serial.print(",");    
-  Serial.println(i*i);    
+  Serial.println(String("1," + String(i, DEC)));    
   i++;
   if (i == 10) {
     i = 0;
   }
 
-  Serial.print(2);    
-  Serial.print(",");    
-  Serial.println(j*j / 4);    
+  Serial.println(String("2," + String(j*j / 4, DEC)));     
   j++;
   if (j == 30) {
     j = 0;
   }
 
-   Serial.print(3);    
-  Serial.print(",");    
-  Serial.println(30-k);    
+ Serial.println(String("3," + String(30-k, DEC)));      
   k++;
   if (k == 30) {
     k = 0;
   }
-  
-  
-  delay(1000);
+   
+  delay(0);
 }

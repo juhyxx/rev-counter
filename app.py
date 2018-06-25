@@ -6,4 +6,4 @@ from model import *
 app = App()
 app.model = Model()
 app.model.connect()
-app.mainloop()
+#app.mainloop()

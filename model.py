@@ -1,11 +1,5 @@
 import serial
-from multiprocessing import Pool
-from multiprocessing import Process
-import threading
-import time
-
-
-# python -m serial.tools.miniterm <port_name>
+import re
 
 class Model:
     inputData = ''
@@ -23,9 +17,10 @@ class Model:
         self.onDataChange(self._data)
 
     def dataAppend(self, newData):
-        self.inputData = self.inputData + newData + '\n'
-        self._data = self.convert_data(self.inputData)
-        self.onDataChange(self._data)
+        if  re.match("\d+,\d+", newData):
+            self.inputData = self.inputData + newData + '\n'
+            self._data = self.convert_data(self.inputData)
+            self.onDataChange(self._data)
 
     @property
     def originalData(self):
@@ -37,6 +32,9 @@ class Model:
 
     def onDataChange(self, data):
         print('Data changed, implement me')
+
+    def updateUI(self):
+        print('free for update')
 
     @staticmethod
     def convert_data(data):
@@ -54,24 +52,25 @@ class Model:
                     item['y'].append(float(val[1]))
                     item['x'].append(index)
                     index += 1
-                except:
+                except Exception as e:
                     print('Ouups:', value)
+                    print(e)
         return result
 
     def readSerial(self):
-        t = threading.currentThread()
-        while getattr(t, "do_run", True):
-            with serial.Serial(self.port, self.baudrate, timeout=1) as ser:
-                while(True):
-                    line = ser.readline()
+        while(self.serial.isOpen()):
+            if (self.serial.inWaiting() > 0):
+                line = self.serial.readline()
+                print(line)
+                try:
                     self.dataAppend(line.decode('utf-8').rstrip())
+                except:
+                    pass
+            self.updateUI()
 
     def connect(self):
-        self.t = threading.Thread(target=self.readSerial, name="SerialReader")
-        self.t.do_run = True
-        self.t.start()
+        self.serial = serial.Serial(self.port, self.baudrate, timeout=0)
+        self.readSerial()
 
     def destroy(self):
-        self.t.do_run = False
-        #time.sleep(5)
-        self.t.join()
+        self.serial.close()

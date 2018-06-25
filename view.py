@@ -20,6 +20,13 @@ class App(Frame):
     def model(self, new_model):
         self._model = new_model
         self.model.onDataChange = self.draw_data
+        self.model.updateUI = self.updateUI
+
+    def updateUI(self):
+        try:
+            self.win.update()
+        except:
+            pass
 
     def set_title(self, title = ""):
         self.win.title(self.title + ' ' + title)
@@ -82,7 +89,11 @@ class App(Frame):
 
         axis.set_xlim(range['xmin'], range['xmax'])
         axis.set_ylim(range['ymin'], range['ymax'])
-        self.canvas.draw()
+        try:
+            self.canvas.draw()
+        except:
+            print('Bum')
+
 
     def generate_menu_bar(self, win):
         menubar = Menu(win)
