@@ -1,6 +1,8 @@
-import serial
+from serial import Serial, SerialException
 import re
-import time
+from tkinter import messagebox
+
+
 
 class Model:
     inputData = ''
@@ -59,7 +61,7 @@ class Model:
         return result
 
     def read_serial(self):
-        while(self.serial.isOpen()):
+        while(self.serial and self.serial.isOpen()):
             if (self.serial.inWaiting() > 0):
                 line = self.serial.readline()
                 print(line)
@@ -70,8 +72,12 @@ class Model:
             self.update_ui()
 
     def connect(self):
-        self.serial = serial.Serial(self.port, self.baudrate, timeout=0)
-        self.read_serial()
+        try:
+            self.serial = Serial(self.port, self.baudrate, timeout=0)
+            self.read_serial()
+        except SerialException as e:
+            print(e)
+            messagebox.showerror("Port /dev/ttyACM0 not found", "Connect Arduino first")
 
     def destroy(self):
         self.serial.close()
