@@ -62,16 +62,16 @@ class App(Frame):
         axis = self.axis
         range = {
             'xmin': 0,
-            'xmax': 100,
+            'xmax': 0,
             'ymin': 0,
-            'ymax': 100
+            'ymax': 0
         }
 
         for sensor in data:
             try:
                 line = self.lines[sensor]
             except:
-                line, = axis.plot([],[])
+                line, = axis.plot([],[], label=sensor)
                 self.lines[sensor] = line
             x = data[sensor]['x']
             y = data[sensor]['y']
@@ -84,11 +84,13 @@ class App(Frame):
             except:
                 range['xmin'] = 0
                 range['ymin'] = 0
-                range['xmax'] = 100
-                range['ymax'] = 100
+                range['xmax'] = 0
+                range['ymax'] = 0
+        axis.legend()
 
         axis.set_xlim(range['xmin'], range['xmax'])
         axis.set_ylim(range['ymin'], range['ymax'])
+
         try:
             self.canvas.draw()
         except:

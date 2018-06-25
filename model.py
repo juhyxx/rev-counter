@@ -1,5 +1,6 @@
 import serial
 import re
+import time
 
 class Model:
     inputData = ''
