@@ -28,10 +28,10 @@ class App(tk.Frame):
         except:
             pass
 
-    def set_title(self, title = ""):
+    def set_title(self, title=""):
         self.win.title(self.title + ' ' + title)
 
-    def __init__(self,  *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         win = tk.Tk()
         tk.Frame.__init__(self, win, *args, **kwargs)
 
@@ -71,7 +71,7 @@ class App(tk.Frame):
             try:
                 line = self.lines[sensor]
             except:
-                line, = axis.plot([],[], label=sensor)
+                line, = axis.plot([], [], label=sensor)
                 self.lines[sensor] = line
             x = data[sensor]['x']
             y = data[sensor]['y']
@@ -95,7 +95,6 @@ class App(tk.Frame):
             self.canvas.draw()
         except:
             print('Bum')
-
 
     def generate_menu_bar(self, win):
         menubar = tk.Menu(win)

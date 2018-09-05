@@ -3,7 +3,6 @@ import re
 from tkinter import messagebox
 
 
-
 class Model:
     inputData = ''
     port = '/dev/ttyACM0'
@@ -14,14 +13,14 @@ class Model:
         return self._data
 
     @data.setter
-    def data(self, newData):
-        self.inputData = newData
+    def data(self, new_data):
+        self.inputData = new_data
         self._data = self.convert_data(self.inputData)
         self.on_data_change(self._data)
 
-    def data_append(self, newData):
-        if  re.match("\d+,\d+", newData):
-            self.inputData = self.inputData + newData + '\n'
+    def data_append(self, new_data):
+        if re.match("\d+,\d+", new_data):
+            self.inputData = self.inputData + new_data + '\n'
             self._data = self.convert_data(self.inputData)
             self.on_data_change(self._data)
 
@@ -41,15 +40,21 @@ class Model:
 
     @staticmethod
     def convert_data(data):
+        """
+        Converts input strings to dictionary
+        :rtype: dict
+        :param input string:
+        :return: parsed dictionary
+        """
         result = {}
         index = 0
         for value in data.split("\n"):
-            if (value):
+            if value:
                 val = value.split(",")
                 try:
                     key = int(val[0])
                     item = result.get(key)
-                    if (item is None):
+                    if item is None:
                         result[key] = {"x": [], "y": []}
                         item = result.get(key)
                     item['y'].append(float(val[1]))
@@ -61,17 +66,21 @@ class Model:
         return result
 
     def read_serial(self):
-        while(self.serial and self.serial.isOpen()):
-            if (self.serial.inWaiting() > 0):
+        while self.serial and self.serial.isOpen():
+            if self.serial.inWaiting() > 0:
                 line = self.serial.readline()
                 print(line)
                 try:
                     self.data_append(line.decode('utf-8').rstrip())
-                except:
+                except Ex:
                     pass
             self.update_ui()
 
     def connect(self):
+        """
+        Connects to serial port (looking for arduino)
+        :return: None
+        """
         try:
             self.serial = Serial(self.port, self.baudrate, timeout=0)
             self.read_serial()
